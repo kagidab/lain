@@ -19,16 +19,176 @@
             overflow-x: hidden;
         }
 
+        /* ── animated wired data-stream background ── */
+        #dataStream {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.12;
+            pointer-events: none;
+        }
+
+        /* ── boot sequence overlay ── */
+        .boot-overlay {
+            position: fixed;
+            inset: 0;
+            background: #0a0a0a;
+            z-index: 20000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: opacity 0.8s ease-out;
+        }
+        .boot-overlay.done {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .boot-text {
+            color: #d4a0ff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            white-space: pre;
+            text-align: left;
+            line-height: 1.7;
+            text-shadow: 0 0 6px #d4a0ff;
+            max-width: 600px;
+            width: 90%;
+        }
+        .boot-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1em;
+            background: #d4a0ff;
+            animation: blink-cursor 0.6s steps(1) infinite;
+            vertical-align: text-bottom;
+            margin-left: 2px;
+        }
+        @keyframes blink-cursor {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+
+        /* ── protocol status bar ── */
+        .protocol-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 26px;
+            background: rgba(13, 8, 24, 0.92);
+            border-bottom: 1px solid #3a2060;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 14px;
+            font-size: 0.65em;
+            color: #6a50a0;
+            z-index: 9997;
+            letter-spacing: 1px;
+            backdrop-filter: blur(4px);
+        }
+        .protocol-bar .bar-left,
+        .protocol-bar .bar-right {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+        }
+        .protocol-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .indicator-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #7b5faa;
+            animation: dot-pulse 3s ease-in-out infinite;
+        }
+        .indicator-dot.active {
+            background: #d4a0ff;
+            box-shadow: 0 0 6px #d4a0ff;
+        }
+        @keyframes dot-pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* ── corner frame decorations (Navi-inspired) ── */
+        .navi-frame {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9996;
+        }
+        .navi-frame.top-left {
+            top: 32px;
+            left: 8px;
+            width: 60px;
+            height: 60px;
+            border-top: 2px solid #3a2060;
+            border-left: 2px solid #3a2060;
+        }
+        .navi-frame.top-right {
+            top: 32px;
+            right: 8px;
+            width: 60px;
+            height: 60px;
+            border-top: 2px solid #3a2060;
+            border-right: 2px solid #3a2060;
+        }
+        .navi-frame.bottom-left {
+            bottom: 8px;
+            left: 8px;
+            width: 60px;
+            height: 60px;
+            border-bottom: 2px solid #3a2060;
+            border-left: 2px solid #3a2060;
+        }
+        .navi-frame.bottom-right {
+            bottom: 8px;
+            right: 8px;
+            width: 60px;
+            height: 60px;
+            border-bottom: 2px solid #3a2060;
+            border-right: 2px solid #3a2060;
+        }
+
+        /* ── ambient side data ticker ── */
+        .side-ticker {
+            position: fixed;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            writing-mode: vertical-rl;
+            font-size: 0.55em;
+            color: #3a2060;
+            letter-spacing: 3px;
+            z-index: 9996;
+            pointer-events: none;
+            animation: ticker-scroll 20s linear infinite;
+            white-space: nowrap;
+        }
+        @keyframes ticker-scroll {
+            0% { transform: translateY(-50%) translateY(0); }
+            100% { transform: translateY(-50%) translateY(-80px); }
+        }
+
         .container {
             max-width: 900px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px 20px 20px;
+            position: relative;
+            z-index: 1;
         }
 
         .header {
             text-align: center;
             padding: 40px 0;
-            border-bottom: 2px solid #d4a0ff;
+            border-bottom: 2px solid #3a2060;
             margin-bottom: 30px;
             position: relative;
         }
@@ -40,73 +200,169 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(180deg, transparent 0%, #0d0818 100%);
+            background: linear-gradient(180deg, transparent 0%, rgba(13, 8, 24, 0.6) 100%);
             pointer-events: none;
         }
 
+        /* ── decorative crosshair around title ── */
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 240px;
+            height: 240px;
+            border: 1px solid rgba(90, 64, 144, 0.15);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: crosshair-rotate 30s linear infinite;
+        }
+        @keyframes crosshair-rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to   { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
         h1 {
-            font-size: 3em;
-            letter-spacing: 10px;
-            text-shadow: 0 0 10px #d4a0ff, 0 0 20px #d4a0ff;
-            animation: glitch 3s infinite;
+            font-size: 3.5em;
+            letter-spacing: 18px;
+            text-shadow:
+                0 0 10px #d4a0ff,
+                0 0 30px rgba(180, 140, 255, 0.5),
+                0 0 60px rgba(180, 140, 255, 0.2);
+            animation: glitch 4s infinite;
             position: relative;
             z-index: 1;
         }
+        h1::before,
+        h1::after {
+            content: 'LAIN';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        h1::before {
+            color: #ff3090;
+            z-index: -1;
+            animation: glitch-r 4s infinite;
+            clip-path: inset(0 0 60% 0);
+        }
+        h1::after {
+            color: #30d0ff;
+            z-index: -1;
+            animation: glitch-b 4s infinite;
+            clip-path: inset(60% 0 0 0);
+        }
 
         @keyframes glitch {
-            0%, 90%, 100% {
-                transform: translate(0);
-            }
-            92% {
-                transform: translate(-2px, 2px);
-            }
-            94% {
-                transform: translate(2px, -2px);
-            }
-            96% {
-                transform: translate(-2px, -2px);
-            }
+            0%, 88%, 100% { transform: translate(0); }
+            89% { transform: translate(-3px, 2px) skewX(-0.5deg); }
+            91% { transform: translate(3px, -2px) skewX(0.5deg); }
+            93% { transform: translate(-2px, -1px); }
+            95% { transform: translate(2px, 1px) skewX(-0.3deg); }
+        }
+        @keyframes glitch-r {
+            0%, 88%, 100% { transform: translate(0); }
+            89% { transform: translate(4px, -1px); }
+            91% { transform: translate(-3px, 2px); }
+            93% { transform: translate(2px, 1px); }
+        }
+        @keyframes glitch-b {
+            0%, 88%, 100% { transform: translate(0); }
+            89% { transform: translate(-4px, 1px); }
+            91% { transform: translate(3px, -2px); }
+            93% { transform: translate(-2px, -1px); }
         }
 
         .subtitle {
             color: #9070b8;
-            font-size: 0.9em;
+            font-size: 0.85em;
             margin-top: 10px;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             position: relative;
             z-index: 1;
+        }
+
+        .lain-quote {
+            color: #5a4090;
+            font-size: 0.78em;
+            margin-top: 14px;
+            font-style: italic;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+            min-height: 1.6em;
+        }
+        .lain-quote .typing-cursor {
+            display: inline-block;
+            width: 6px;
+            height: 0.9em;
+            background: #5a4090;
+            animation: blink-cursor 0.6s steps(1) infinite;
+            vertical-align: text-bottom;
+            margin-left: 1px;
+        }
+
+        /* ── layer indicator ── */
+        .layer-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 16px;
+            position: relative;
+            z-index: 1;
+        }
+        .layer-pip {
+            width: 8px;
+            height: 8px;
+            border: 1px solid #5a4090;
+            background: transparent;
+            transition: all 0.5s;
+        }
+        .layer-pip.active {
+            background: #d4a0ff;
+            box-shadow: 0 0 8px #d4a0ff;
         }
 
         .search-box {
             margin: 30px 0;
             text-align: center;
+            position: relative;
         }
 
         .search-input {
             width: 80%;
-            padding: 15px;
-            background-color: #0d0818;
-            border: 2px solid #d4a0ff;
+            padding: 15px 15px 15px 40px;
+            background-color: rgba(13, 8, 24, 0.8);
+            border: 1px solid #3a2060;
+            border-left: 3px solid #d4a0ff;
             color: #d4a0ff;
             font-family: 'Courier New', monospace;
             font-size: 1.1em;
             outline: none;
-            box-shadow: 0 0 10px rgba(180, 140, 255, 0.3);
+            box-shadow: 0 0 10px rgba(180, 140, 255, 0.15);
+            transition: all 0.3s;
         }
 
         .search-input::placeholder {
-            color: #6a50a0;
+            color: #4a3580;
         }
 
         .search-input:focus {
-            box-shadow: 0 0 20px rgba(180, 140, 255, 0.5);
+            border-color: #d4a0ff;
+            box-shadow:
+                0 0 20px rgba(180, 140, 255, 0.3),
+                inset 0 0 30px rgba(180, 140, 255, 0.05);
         }
 
         .search-button {
             padding: 15px 30px;
-            background-color: #d4a0ff;
-            border: none;
-            color: #0a0a0a;
+            background-color: transparent;
+            border: 1px solid #d4a0ff;
+            color: #d4a0ff;
             font-family: 'Courier New', monospace;
             font-size: 1.1em;
             cursor: pointer;
@@ -114,11 +370,28 @@
             text-transform: uppercase;
             font-weight: bold;
             transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 2px;
+        }
+        .search-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 160, 255, 0.15), transparent);
+            transition: left 0.5s;
         }
 
         .search-button:hover {
-            background-color: #b880e0;
-            box-shadow: 0 0 20px rgba(180, 140, 255, 0.7);
+            background-color: rgba(212, 160, 255, 0.1);
+            box-shadow: 0 0 20px rgba(180, 140, 255, 0.4);
+            text-shadow: 0 0 8px #d4a0ff;
+        }
+        .search-button:hover::before {
+            left: 100%;
         }
 
         .loading {
@@ -126,12 +399,33 @@
             color: #9070b8;
             margin: 20px 0;
             display: none;
-            animation: pulse 1s infinite;
+            font-size: 0.9em;
+        }
+        .loading-lines {
+            text-align: left;
+            display: inline-block;
+        }
+        .loading-line {
+            opacity: 0;
+            animation: load-fade-in 0.3s forwards;
+        }
+        @keyframes load-fade-in {
+            to { opacity: 1; }
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
+        .loading .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #3a2060;
+            border-top-color: #d4a0ff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         .results {
@@ -139,24 +433,62 @@
         }
 
         .result-item {
-            background-color: #0d0818;
-            border: 1px solid #d4a0ff;
-            margin-bottom: 20px;
-            padding: 20px;
-            box-shadow: 0 0 15px rgba(180, 140, 255, 0.2);
+            background-color: rgba(13, 8, 24, 0.7);
+            border: 1px solid #2a1848;
+            border-left: 3px solid #7b5faa;
+            margin-bottom: 16px;
+            padding: 18px 20px;
+            box-shadow: 0 0 15px rgba(180, 140, 255, 0.08);
             transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: result-appear 0.4s forwards;
+        }
+        .result-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: #d4a0ff;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        @keyframes result-appear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .result-item:hover {
-            box-shadow: 0 0 25px rgba(180, 140, 255, 0.4);
-            transform: translateX(5px);
+            background-color: rgba(20, 12, 36, 0.9);
+            border-left-color: #d4a0ff;
+            box-shadow:
+                0 0 25px rgba(180, 140, 255, 0.15),
+                inset 0 0 40px rgba(180, 140, 255, 0.03);
+            transform: translateX(4px);
+        }
+        .result-item:hover::before {
+            opacity: 1;
+        }
+
+        .result-number {
+            color: #3a2060;
+            font-size: 0.7em;
+            margin-bottom: 4px;
+            letter-spacing: 1px;
         }
 
         .result-title {
-            font-size: 1.5em;
+            font-size: 1.3em;
             color: #d4a0ff;
-            margin-bottom: 10px;
-            text-shadow: 0 0 5px #d4a0ff;
+            margin-bottom: 8px;
+            text-shadow: 0 0 5px rgba(212, 160, 255, 0.3);
         }
 
         .result-title a {
@@ -171,33 +503,55 @@
         }
 
         .result-snippet {
-            color: #9070b8;
-            line-height: 1.8;
-            margin-bottom: 10px;
+            color: #8068a8;
+            line-height: 1.7;
+            margin-bottom: 8px;
+            font-size: 0.9em;
         }
 
         .result-url {
-            color: #6a50a0;
-            font-size: 0.9em;
+            color: #4a3580;
+            font-size: 0.8em;
             word-break: break-all;
         }
 
         .no-results {
             text-align: center;
-            color: #ff0000;
+            color: #ff3060;
             margin-top: 30px;
-            font-size: 1.2em;
-            text-shadow: 0 0 10px #ff0000;
+            font-size: 1.1em;
+            text-shadow: 0 0 10px rgba(255, 48, 96, 0.5);
+            animation: no-results-glitch 2s infinite;
+        }
+        @keyframes no-results-glitch {
+            0%, 95%, 100% { transform: translate(0); }
+            96% { transform: translate(-2px, 1px); }
+            98% { transform: translate(2px, -1px); }
         }
 
         .footer {
             text-align: center;
-            margin-top: 50px;
+            margin-top: 60px;
             padding: 20px;
-            border-top: 2px solid #d4a0ff;
-            color: #6a50a0;
+            border-top: 1px solid #2a1848;
+            color: #3a2060;
+            font-size: 0.85em;
+            position: relative;
+        }
+        .footer p:first-child {
+            color: #5a4090;
+            letter-spacing: 3px;
+            margin-bottom: 6px;
+        }
+        .footer::before {
+            content: '◈';
+            display: block;
+            color: #3a2060;
+            margin-bottom: 12px;
+            font-size: 0.8em;
         }
 
+        /* ── CRT effects ── */
         .scanlines {
             position: fixed;
             top: 0;
@@ -223,65 +577,108 @@
             height: 100%;
             pointer-events: none;
             z-index: 9998;
-            background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.3) 100%);
+            background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.4) 100%);
         }
 
-        .lain-quote {
-            color: #5a4090;
-            font-size: 0.8em;
-            margin-top: 12px;
-            font-style: italic;
-            letter-spacing: 1px;
-            position: relative;
-            z-index: 1;
-            min-height: 1.4em;
+        /* ── chromatic aberration on hover ── */
+        .crt-aberration {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9997;
+            opacity: 0;
+            transition: opacity 0.3s;
+            mix-blend-mode: screen;
         }
 
+        /* ── screen flicker ── */
+        .screen-flicker {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9996;
+            background: transparent;
+            animation: flicker 8s infinite;
+        }
+        @keyframes flicker {
+            0%, 100%   { opacity: 0; }
+            4%          { opacity: 0; }
+            4.5%        { opacity: 0.04; background: rgba(212, 160, 255, 0.03); }
+            5%          { opacity: 0; }
+            55%         { opacity: 0; }
+            55.5%       { opacity: 0.02; background: rgba(212, 160, 255, 0.02); }
+            56%         { opacity: 0; }
+        }
+
+        /* ── horizontal glitch bar ── */
+        .glitch-bar {
+            position: fixed;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(212, 160, 255, 0.15);
+            pointer-events: none;
+            z-index: 9995;
+            opacity: 0;
+            animation: glitch-bar-sweep 6s infinite;
+        }
+        @keyframes glitch-bar-sweep {
+            0%, 100% { top: -2px; opacity: 0; }
+            2%       { opacity: 0.8; }
+            8%       { top: 100%; opacity: 0; }
+        }
+
+        /* ── article styles ── */
         .article-viewer {
             margin-top: 30px;
+            animation: result-appear 0.5s forwards;
         }
 
         .article-back {
             display: inline-block;
             padding: 8px 20px;
             background-color: transparent;
-            border: 1px solid #d4a0ff;
-            color: #d4a0ff;
+            border: 1px solid #3a2060;
+            color: #9070b8;
             font-family: 'Courier New', monospace;
-            font-size: 0.9em;
+            font-size: 0.85em;
             cursor: pointer;
             margin-bottom: 20px;
             transition: all 0.3s;
+            letter-spacing: 1px;
         }
 
         .article-back:hover {
-            background-color: #d4a0ff;
-            color: #0a0a0a;
-            box-shadow: 0 0 15px rgba(180, 140, 255, 0.5);
+            border-color: #d4a0ff;
+            color: #d4a0ff;
+            box-shadow: 0 0 15px rgba(180, 140, 255, 0.3);
+            text-shadow: 0 0 8px rgba(212, 160, 255, 0.5);
         }
 
         .article-content {
-            background-color: #0d0818;
-            border: 1px solid #d4a0ff;
-            padding: 25px;
+            background-color: rgba(13, 8, 24, 0.7);
+            border: 1px solid #2a1848;
+            border-top: 2px solid #5a4090;
+            padding: 28px;
             line-height: 1.8;
-            color: #b880e0;
-            box-shadow: 0 0 15px rgba(180, 140, 255, 0.2);
+            color: #9880c0;
+            box-shadow: 0 0 20px rgba(180, 140, 255, 0.08);
         }
 
         .article-content h2 {
             color: #d4a0ff;
-            font-size: 1.3em;
-            margin: 20px 0 10px;
-            text-shadow: 0 0 5px #d4a0ff;
-            border-bottom: 1px solid #4a3580;
-            padding-bottom: 5px;
+            font-size: 1.2em;
+            margin: 24px 0 10px;
+            text-shadow: 0 0 5px rgba(212, 160, 255, 0.3);
+            border-bottom: 1px solid #2a1848;
+            padding-bottom: 6px;
+            letter-spacing: 1px;
         }
 
         .article-content h3 {
-            color: #c490f0;
-            font-size: 1.1em;
-            margin: 15px 0 8px;
+            color: #b890e0;
+            font-size: 1.05em;
+            margin: 18px 0 8px;
         }
 
         .article-content p {
@@ -289,32 +686,39 @@
         }
 
         .article-content a {
-            color: #d4a0ff;
-            text-decoration: underline;
+            color: #b890e0;
+            text-decoration: none;
+            border-bottom: 1px dotted #5a4090;
             cursor: pointer;
+            transition: all 0.3s;
         }
 
         .article-content a:hover {
-            text-shadow: 0 0 8px #d4a0ff;
+            color: #d4a0ff;
+            border-bottom-color: #d4a0ff;
+            text-shadow: 0 0 8px rgba(212, 160, 255, 0.4);
         }
 
         .article-heading {
-            font-size: 1.8em;
+            font-size: 1.6em;
             color: #d4a0ff;
-            text-shadow: 0 0 10px #d4a0ff;
+            text-shadow: 0 0 10px rgba(212, 160, 255, 0.4);
             margin-bottom: 15px;
+            letter-spacing: 2px;
         }
 
         .article-content img {
             max-width: 100%;
             height: auto;
             cursor: pointer;
-            border: 1px solid #d4a0ff;
-            transition: box-shadow 0.3s;
+            border: 1px solid #3a2060;
+            transition: all 0.3s;
+            filter: saturate(0.7) brightness(0.9);
         }
 
         .article-content img:hover {
-            box-shadow: 0 0 15px rgba(180, 140, 255, 0.5);
+            box-shadow: 0 0 20px rgba(180, 140, 255, 0.3);
+            filter: saturate(1) brightness(1);
         }
 
         .image-overlay {
@@ -324,7 +728,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.92);
+            background: rgba(5, 3, 12, 0.95);
             z-index: 10000;
             cursor: pointer;
             justify-content: center;
@@ -338,14 +742,11 @@
         .image-overlay img {
             max-width: 90%;
             max-height: 90%;
-            border: 2px solid #d4a0ff;
-            box-shadow: 0 0 30px rgba(180, 140, 255, 0.4);
+            border: 1px solid #5a4090;
+            box-shadow: 0 0 40px rgba(180, 140, 255, 0.2);
         }
 
-        .result-item {
-            cursor: pointer;
-        }
-
+        /* ── responsive ── */
         @media (max-width: 768px) {
             .search-input {
                 width: 100%;
@@ -358,24 +759,85 @@
             }
 
             h1 {
-                font-size: 2em;
-                letter-spacing: 5px;
+                font-size: 2.2em;
+                letter-spacing: 10px;
+            }
+
+            .side-ticker {
+                display: none;
+            }
+
+            .navi-frame {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
+    <!-- boot sequence overlay -->
+    <div class="boot-overlay" id="bootOverlay">
+        <div class="boot-text" id="bootText"></div>
+    </div>
+
+    <!-- CRT / scanline overlays -->
     <div class="scanlines"></div>
     <div class="crt-effect"></div>
+    <div class="screen-flicker"></div>
+    <div class="glitch-bar"></div>
+    <div class="crt-aberration" id="crtAberration"></div>
+
+    <!-- animated data stream background -->
+    <canvas id="dataStream"></canvas>
+
+    <!-- protocol status bar -->
+    <div class="protocol-bar" id="protocolBar">
+        <div class="bar-left">
+            <span class="protocol-indicator">
+                <span class="indicator-dot active"></span>
+                PROTOCOL 7
+            </span>
+            <span class="protocol-indicator">
+                <span class="indicator-dot active"></span>
+                <span id="layerLabel">LAYER 01</span>
+            </span>
+        </div>
+        <div class="bar-right">
+            <span id="protocolClock">00:00:00</span>
+            <span class="protocol-indicator">
+                <span class="indicator-dot" id="connectionDot"></span>
+                <span id="connectionStatus">WIRED</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- Navi-inspired corner frames -->
+    <div class="navi-frame top-left"></div>
+    <div class="navi-frame top-right"></div>
+    <div class="navi-frame bottom-left"></div>
+    <div class="navi-frame bottom-right"></div>
+
+    <!-- ambient side data -->
+    <div class="side-ticker" id="sideTicker"></div>
+
+    <!-- image overlay for fullscreen viewing -->
     <div class="image-overlay" id="imageOverlay">
         <img id="overlayImage" src="" alt="Fullscreen image">
     </div>
     
-    <div class="container">
+    <div class="container" id="mainContainer">
         <header class="header">
             <h1>LAIN</h1>
             <p class="subtitle" id="subtitle">[ LAYER 01: WELCOME TO THE WIRED ]</p>
             <p class="lain-quote" id="lainQuote"></p>
+            <div class="layer-indicator" id="layerIndicator">
+                <div class="layer-pip active"></div>
+                <div class="layer-pip"></div>
+                <div class="layer-pip"></div>
+                <div class="layer-pip"></div>
+                <div class="layer-pip"></div>
+                <div class="layer-pip"></div>
+                <div class="layer-pip"></div>
+            </div>
         </header>
 
         <div class="search-box">
@@ -388,7 +850,7 @@
         </div>
 
         <div class="loading" id="loading">
-            &gt;&gt; ACCESSING WIRED DATABASE...
+            <div class="loading-lines" id="loadingLines"></div>
         </div>
 
         <div class="results" id="results"></div>
@@ -400,12 +862,9 @@
     </div>
 
     <script>
-        const searchInput = document.getElementById('searchInput');
-        const searchButton = document.getElementById('searchButton');
-        const loading = document.getElementById('loading');
-        const results = document.getElementById('results');
-        const lainQuote = document.getElementById('lainQuote');
-
+        /* ═══════════════════════════════════════════
+           DATA & CONFIG
+           ═══════════════════════════════════════════ */
         const LAIN_QUOTES = [
             "If you're not remembered, then you never existed.",
             "No matter where you go, everyone's connected.",
@@ -416,17 +875,261 @@
             "People only have substance within the memories of others.",
             "I don't need to stay in the real world.",
             "Everyone is connected. I can reach everyone.",
+            "What isn't remembered never happened.",
+            "Memory is merely a record. You just need to rewrite that record.",
+            "I am connected... therefore I exist.",
         ];
 
-        // Display a random Lain quote
-        function showRandomQuote() {
-            const idx = Math.floor(Math.random() * LAIN_QUOTES.length);
-            lainQuote.textContent = `"${LAIN_QUOTES[idx]}"`;
-        }
-        showRandomQuote();
+        const LAYER_NAMES = [
+            'WEIRD', 'GIRLS', 'PSYCHE', 'RELIGION', 'DISTORTION',
+            'KIDS', 'SOCIETY', 'RUMORS', 'PROTOCOL', 'LOVE',
+            'INFORNOGRAPHY', 'LANDSCAPE', 'EGO',
+        ];
 
-        // Image overlay close handlers
-        const imageOverlay = document.getElementById('imageOverlay');
+        const BOOT_LINES = [
+            'COPLAND OS ENTERPRISE',
+            'TACHIBANA GENERAL LABORATORIES',
+            '(C) TACHIBANA LABS 1998',
+            '',
+            'BIOS v2.31.017 ... OK',
+            'MEMORY TEST ... 640K CONVENTIONAL ... EXTENDED 261120K',
+            '',
+            'LOADING PROTOCOL 7 DRIVER ...',
+            'PSYCHE PROCESSOR ... INITIALIZED',
+            'KNIGHTS OF THE EASTERN CALCULUS ... NOT FOUND',
+            '',
+            'ESTABLISHING CONNECTION TO THE WIRED ...',
+            'LAYER 01 ACTIVE',
+            'SCHUMANN RESONANCE ... 7.83 Hz ... LOCKED',
+            '',
+            'WELCOME TO THE WIRED, LAIN.',
+        ];
+
+        const STREAM_GLYPHS = [
+            '0', '1', 'ア', 'イ', 'ウ', 'エ', 'オ', 'カ', 'キ', 'ク',
+            'ケ', 'コ', 'レ', 'イ', 'ン', '玲', '音', '岩', '倉',
+            ':', '.', '/', '>', '<', '=', '+', '-', '*', '|',
+            '7', '3', 'F', 'A', 'C', 'E', 'D',
+        ];
+
+        const LOADING_MESSAGES = [
+            '>> ACCESSING WIRED DATABASE...',
+            '>> RESOLVING NODE ADDRESS...',
+            '>> DECRYPTING PROTOCOL 7 PACKETS...',
+            '>> PARSING SCHUMANN RESONANCE...',
+            '>> DATA STREAM ESTABLISHED',
+        ];
+
+        /* ═══════════════════════════════════════════
+           DOM REFERENCES
+           ═══════════════════════════════════════════ */
+        const searchInput    = document.getElementById('searchInput');
+        const searchButton   = document.getElementById('searchButton');
+        const loading        = document.getElementById('loading');
+        const loadingLines   = document.getElementById('loadingLines');
+        const results        = document.getElementById('results');
+        const lainQuote      = document.getElementById('lainQuote');
+        const imageOverlay   = document.getElementById('imageOverlay');
+        const bootOverlay    = document.getElementById('bootOverlay');
+        const bootText       = document.getElementById('bootText');
+        const mainContainer  = document.getElementById('mainContainer');
+
+        /* ═══════════════════════════════════════════
+           BOOT SEQUENCE
+           ═══════════════════════════════════════════ */
+        let currentLayer = 0;
+
+        function runBootSequence() {
+            mainContainer.style.opacity = '0';
+            let lineIndex = 0;
+            const cursor = document.createElement('span');
+            cursor.className = 'boot-cursor';
+
+            function addLine() {
+                if (lineIndex >= BOOT_LINES.length) {
+                    bootText.appendChild(cursor);
+                    setTimeout(() => {
+                        bootOverlay.classList.add('done');
+                        mainContainer.style.transition = 'opacity 0.8s';
+                        mainContainer.style.opacity = '1';
+                        searchInput.focus();
+                        typeQuote();
+                    }, 600);
+                    return;
+                }
+                const line = BOOT_LINES[lineIndex];
+                bootText.textContent += line + '\n';
+                bootText.appendChild(cursor);
+                lineIndex++;
+                const delay = line === '' ? 80 : 50 + Math.random() * 80;
+                setTimeout(addLine, delay);
+            }
+            addLine();
+        }
+
+        /* ═══════════════════════════════════════════
+           TYPING QUOTE EFFECT
+           ═══════════════════════════════════════════ */
+        let quoteTimeout = null;
+        function typeQuote() {
+            if (quoteTimeout) clearTimeout(quoteTimeout);
+            const quote = LAIN_QUOTES[Math.floor(Math.random() * LAIN_QUOTES.length)];
+            const fullText = `"${quote}"`;
+            lainQuote.innerHTML = '';
+            let i = 0;
+            const cursor = document.createElement('span');
+            cursor.className = 'typing-cursor';
+
+            function tick() {
+                if (i < fullText.length) {
+                    lainQuote.textContent = fullText.slice(0, i + 1);
+                    lainQuote.appendChild(cursor);
+                    i++;
+                    quoteTimeout = setTimeout(tick, 35 + Math.random() * 25);
+                } else {
+                    lainQuote.textContent = fullText;
+                    lainQuote.appendChild(cursor);
+                    quoteTimeout = setTimeout(() => {
+                        cursor.remove();
+                        quoteTimeout = setTimeout(typeQuote, 8000);
+                    }, 4000);
+                }
+            }
+            tick();
+        }
+
+        /* ═══════════════════════════════════════════
+           LAYER CYCLING
+           ═══════════════════════════════════════════ */
+        const layerPips = document.querySelectorAll('.layer-pip');
+        const layerLabel = document.getElementById('layerLabel');
+        const subtitle = document.getElementById('subtitle');
+
+        function advanceLayer() {
+            currentLayer = (currentLayer + 1) % LAYER_NAMES.length;
+            const num = String(currentLayer + 1).padStart(2, '0');
+            subtitle.textContent = `[ LAYER ${num}: ${LAYER_NAMES[currentLayer]} ]`;
+            layerLabel.textContent = `LAYER ${num}`;
+            layerPips.forEach((pip, idx) => {
+                pip.classList.toggle('active', idx <= (currentLayer % layerPips.length));
+            });
+        }
+
+        /* ═══════════════════════════════════════════
+           PROTOCOL CLOCK
+           ═══════════════════════════════════════════ */
+        const protocolClock = document.getElementById('protocolClock');
+        function updateClock() {
+            const now = new Date();
+            protocolClock.textContent =
+                String(now.getHours()).padStart(2, '0') + ':' +
+                String(now.getMinutes()).padStart(2, '0') + ':' +
+                String(now.getSeconds()).padStart(2, '0');
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        /* ═══════════════════════════════════════════
+           SIDE TICKER
+           ═══════════════════════════════════════════ */
+        const sideTicker = document.getElementById('sideTicker');
+        function generateTickerText() {
+            let text = '';
+            for (let i = 0; i < 60; i++) {
+                text += STREAM_GLYPHS[Math.floor(Math.random() * STREAM_GLYPHS.length)];
+            }
+            sideTicker.textContent = text;
+        }
+        generateTickerText();
+        setInterval(generateTickerText, 4000);
+
+        /* ═══════════════════════════════════════════
+           DATA STREAM CANVAS BACKGROUND
+           ═══════════════════════════════════════════ */
+        const canvas = document.getElementById('dataStream');
+        const ctx = canvas.getContext('2d');
+        let columns = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const colWidth = 18;
+            const numCols = Math.floor(canvas.width / colWidth);
+            if (columns.length !== numCols) {
+                columns = [];
+                for (let i = 0; i < numCols; i++) {
+                    columns.push({
+                        x: i * colWidth,
+                        y: Math.random() * canvas.height,
+                        speed: 0.3 + Math.random() * 1.2,
+                        chars: [],
+                        len: 4 + Math.floor(Math.random() * 12),
+                    });
+                    // Pre-fill chars
+                    for (let j = 0; j < columns[i].len; j++) {
+                        columns[i].chars.push(STREAM_GLYPHS[Math.floor(Math.random() * STREAM_GLYPHS.length)]);
+                    }
+                }
+            }
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        function drawStream() {
+            ctx.fillStyle = 'rgba(10, 10, 10, 0.15)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            columns.forEach(col => {
+                for (let j = 0; j < col.len; j++) {
+                    const alpha = 1 - j / col.len;
+                    const yPos = col.y - j * 16;
+                    if (yPos < -20 || yPos > canvas.height + 20) continue;
+
+                    if (j === 0) {
+                        ctx.fillStyle = `rgba(212, 160, 255, ${alpha * 0.9})`;
+                        ctx.font = '14px "Courier New", monospace';
+                    } else {
+                        ctx.fillStyle = `rgba(90, 64, 144, ${alpha * 0.6})`;
+                        ctx.font = '12px "Courier New", monospace';
+                    }
+                    ctx.fillText(col.chars[j], col.x, yPos);
+                }
+
+                col.y += col.speed;
+                if (col.y - col.len * 16 > canvas.height) {
+                    col.y = -col.len * 16;
+                    col.speed = 0.3 + Math.random() * 1.2;
+                    // Refresh some chars
+                    for (let j = 0; j < col.len; j++) {
+                        if (Math.random() < 0.3) {
+                            col.chars[j] = STREAM_GLYPHS[Math.floor(Math.random() * STREAM_GLYPHS.length)];
+                        }
+                    }
+                }
+                // Randomly mutate a character
+                if (Math.random() < 0.02) {
+                    const idx = Math.floor(Math.random() * col.len);
+                    col.chars[idx] = STREAM_GLYPHS[Math.floor(Math.random() * STREAM_GLYPHS.length)];
+                }
+            });
+            requestAnimationFrame(drawStream);
+        }
+        requestAnimationFrame(drawStream);
+
+        /* ═══════════════════════════════════════════
+           CONNECTION DOT ANIMATION
+           ═══════════════════════════════════════════ */
+        const connectionDot = document.getElementById('connectionDot');
+        const connectionStatus = document.getElementById('connectionStatus');
+        setInterval(() => {
+            const connected = Math.random() > 0.05;
+            connectionDot.classList.toggle('active', connected);
+            connectionStatus.textContent = connected ? 'WIRED' : 'SYNC...';
+        }, 3000);
+
+        /* ═══════════════════════════════════════════
+           IMAGE OVERLAY
+           ═══════════════════════════════════════════ */
         imageOverlay.addEventListener('click', () => {
             imageOverlay.classList.remove('active');
         });
@@ -436,29 +1139,40 @@
             }
         });
 
-        // Search on button click
+        /* ═══════════════════════════════════════════
+           SEARCH
+           ═══════════════════════════════════════════ */
         searchButton.addEventListener('click', performSearch);
-
-        // Search on Enter key
         searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                performSearch();
-            }
+            if (e.key === 'Enter') performSearch();
         });
+
+        function showLoading() {
+            loading.style.display = 'block';
+            loadingLines.innerHTML = '';
+            let i = 0;
+            function addMsg() {
+                if (i >= LOADING_MESSAGES.length) return;
+                const line = document.createElement('div');
+                line.className = 'loading-line';
+                line.style.animationDelay = `${i * 0.15}s`;
+                line.innerHTML = `<span class="spinner"></span>${LOADING_MESSAGES[i]}`;
+                loadingLines.appendChild(line);
+                i++;
+                if (i < LOADING_MESSAGES.length) setTimeout(addMsg, 300);
+            }
+            addMsg();
+        }
 
         async function performSearch() {
             const query = searchInput.value.trim();
-            
-            if (!query) {
-                return;
-            }
+            if (!query) return;
 
-            // Show loading
-            loading.style.display = 'block';
+            showLoading();
             results.innerHTML = '';
+            advanceLayer();
 
             try {
-                // Wikipedia API endpoint
                 const url = `https://en.wikipedia.org/w/api.php?` +
                     `action=query&` +
                     `list=search&` +
@@ -470,7 +1184,6 @@
                 const response = await fetch(url);
                 const data = await response.json();
 
-                // Hide loading
                 loading.style.display = 'none';
 
                 if (data.query && data.query.search && data.query.search.length > 0) {
@@ -494,9 +1207,14 @@
         function displayResults(searchResults) {
             results.innerHTML = '';
 
-            searchResults.forEach(result => {
+            searchResults.forEach((result, index) => {
                 const resultItem = document.createElement('div');
                 resultItem.className = 'result-item';
+                resultItem.style.animationDelay = `${index * 0.07}s`;
+
+                const num = document.createElement('div');
+                num.className = 'result-number';
+                num.textContent = `NODE ${String(index + 1).padStart(3, '0')} // ${result.title.toUpperCase().slice(0, 30)}`;
 
                 const title = document.createElement('div');
                 title.className = 'result-title';
@@ -506,6 +1224,7 @@
                 snippet.className = 'result-snippet';
                 snippet.textContent = stripHtmlTags(result.snippet);
 
+                resultItem.appendChild(num);
                 resultItem.appendChild(title);
                 resultItem.appendChild(snippet);
 
@@ -517,8 +1236,11 @@
             });
         }
 
+        /* ═══════════════════════════════════════════
+           ARTICLE VIEWER
+           ═══════════════════════════════════════════ */
         async function loadArticle(title) {
-            loading.style.display = 'block';
+            showLoading();
             results.innerHTML = '';
 
             try {
@@ -547,9 +1269,6 @@
         }
 
         function getFullSizeImageUrl(thumbUrl) {
-            // Wikipedia thumbnail URLs follow the pattern:
-            // .../thumb/a/ab/File.jpg/220px-File.jpg
-            // Full size URL removes '/thumb' and the trailing '/NNNpx-...' segment
             if (/\/thumb\//.test(thumbUrl)) {
                 return thumbUrl.replace(/\/thumb\//, '/').replace(/\/\d+px-[^/]*$/, '');
             }
@@ -574,14 +1293,13 @@
             const content = document.createElement('div');
             content.className = 'article-content';
 
-            // Parse the HTML and sanitize it
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = html;
 
-            // Remove edit links, reference sections, and other UI elements
+            // Remove UI elements
             tempDiv.querySelectorAll('.mw-editsection, .reference, .reflist, .navbox, .sistersitebox, .mw-empty-elt, .noprint, .mbox-small, .ambox, .metadata, style, .infobox, .sidebar, .toc, .hatnote').forEach(el => el.remove());
 
-            // Convert Wikipedia internal links to clickable article links
+            // Convert Wikipedia internal links
             tempDiv.querySelectorAll('a[href^="/wiki/"]').forEach(link => {
                 const articleTitle = decodeURIComponent(link.getAttribute('href').replace('/wiki/', '')).replace(/_/g, ' ');
                 link.removeAttribute('href');
@@ -593,7 +1311,7 @@
                 });
             });
 
-            // Remove external links that won't work well inline
+            // Remove external links
             tempDiv.querySelectorAll('a[href^="http"], a[href^="//"]').forEach(link => {
                 if (link.textContent.trim()) {
                     const text = document.createTextNode(link.textContent);
@@ -603,9 +1321,8 @@
                 }
             });
 
-            // Make images clickable for fullscreen viewing
+            // Make images clickable
             tempDiv.querySelectorAll('img').forEach(img => {
-                // Fix protocol-relative URLs
                 const src = img.getAttribute('src');
                 if (src && src.startsWith('//')) {
                     img.setAttribute('src', 'https:' + src);
@@ -619,25 +1336,24 @@
                     e.stopPropagation();
                     const overlay = document.getElementById('imageOverlay');
                     const overlayImg = document.getElementById('overlayImage');
-                    // Use full-resolution image URL for the overlay
                     overlayImg.src = getFullSizeImageUrl(img.src);
                     overlay.classList.add('active');
                 });
             });
 
             content.appendChild(tempDiv);
-
             viewer.appendChild(backBtn);
             viewer.appendChild(heading);
             viewer.appendChild(content);
-
             results.appendChild(viewer);
             window.scrollTo(0, 0);
         }
 
-        // Add focus to search input on page load
+        /* ═══════════════════════════════════════════
+           INIT
+           ═══════════════════════════════════════════ */
         window.addEventListener('load', () => {
-            searchInput.focus();
+            runBootSequence();
         });
     </script>
 </body>
