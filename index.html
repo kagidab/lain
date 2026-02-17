@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LAIN - Wikipedia Interface</title>
+    <title>LAIN - Close The World, Open The Wired</title>
     <style>
         * {
             margin: 0;
@@ -206,18 +206,13 @@
             height: 100%;
             pointer-events: none;
             z-index: 9999;
-            background: linear-gradient(
+            background: repeating-linear-gradient(
                 to bottom,
-                rgba(0, 0, 0, 0) 50%,
-                rgba(0, 255, 0, 0.05) 50%
+                transparent 0px,
+                transparent 2px,
+                rgba(0, 255, 0, 0.03) 2px,
+                rgba(0, 255, 0, 0.03) 4px
             );
-            background-size: 100% 4px;
-            animation: scanlines 0.1s linear infinite;
-        }
-
-        @keyframes scanlines {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(4px); }
         }
 
         .crt-effect {
@@ -229,6 +224,89 @@
             pointer-events: none;
             z-index: 9998;
             background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.3) 100%);
+        }
+
+        .lain-quote {
+            color: #005500;
+            font-size: 0.8em;
+            margin-top: 12px;
+            font-style: italic;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+            min-height: 1.4em;
+        }
+
+        .article-viewer {
+            margin-top: 30px;
+        }
+
+        .article-back {
+            display: inline-block;
+            padding: 8px 20px;
+            background-color: transparent;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .article-back:hover {
+            background-color: #00ff00;
+            color: #0a0a0a;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+        }
+
+        .article-content {
+            background-color: #001100;
+            border: 1px solid #00ff00;
+            padding: 25px;
+            line-height: 1.8;
+            color: #00cc00;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+        }
+
+        .article-content h2 {
+            color: #00ff00;
+            font-size: 1.3em;
+            margin: 20px 0 10px;
+            text-shadow: 0 0 5px #00ff00;
+            border-bottom: 1px solid #004400;
+            padding-bottom: 5px;
+        }
+
+        .article-content h3 {
+            color: #00dd00;
+            font-size: 1.1em;
+            margin: 15px 0 8px;
+        }
+
+        .article-content p {
+            margin-bottom: 12px;
+        }
+
+        .article-content a {
+            color: #00ff00;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .article-content a:hover {
+            text-shadow: 0 0 8px #00ff00;
+        }
+
+        .article-heading {
+            font-size: 1.8em;
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+            margin-bottom: 15px;
+        }
+
+        .result-item {
+            cursor: pointer;
         }
 
         @media (max-width: 768px) {
@@ -256,7 +334,8 @@
     <div class="container">
         <header class="header">
             <h1>LAIN</h1>
-            <p class="subtitle">[ WIKIPEDIA INTERFACE ]</p>
+            <p class="subtitle" id="subtitle">[ LAYER 01: WELCOME TO THE WIRED ]</p>
+            <p class="lain-quote" id="lainQuote"></p>
         </header>
 
         <div class="search-box">
@@ -276,7 +355,7 @@
 
         <footer class="footer">
             <p>&gt; PRESENT DAY, PRESENT TIME &lt;</p>
-            <p>Powered by Wikipedia API</p>
+            <p>No matter where you go, everyone's connected.</p>
         </footer>
     </div>
 
@@ -285,6 +364,26 @@
         const searchButton = document.getElementById('searchButton');
         const loading = document.getElementById('loading');
         const results = document.getElementById('results');
+        const lainQuote = document.getElementById('lainQuote');
+
+        const LAIN_QUOTES = [
+            "If you're not remembered, then you never existed.",
+            "No matter where you go, everyone's connected.",
+            "The Wired is an upper layer of the real world.",
+            "You don't need to be afraid. I'm here.",
+            "Close the world. Open the next.",
+            "If you want to avoid pain, you should go back to being alone.",
+            "People only have substance within the memories of others.",
+            "I don't need to stay in the real world.",
+            "Everyone is connected. I can reach everyone.",
+        ];
+
+        // Display a random Lain quote
+        function showRandomQuote() {
+            const idx = Math.floor(Math.random() * LAIN_QUOTES.length);
+            lainQuote.textContent = `"${LAIN_QUOTES[idx]}"`;
+        }
+        showRandomQuote();
 
         // Search on button click
         searchButton.addEventListener('click', performSearch);
@@ -335,12 +434,7 @@
             }
         }
 
-        function getWikipediaUrl(title) {
-            return `https://en.wikipedia.org/wiki/${encodeURIComponent(title.replace(/ /g, '_'))}`;
-        }
-
         function stripHtmlTags(html) {
-            // Create a temporary element to parse HTML and extract text safely
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = html;
             return tempDiv.textContent || tempDiv.innerText || '';
@@ -355,27 +449,107 @@
 
                 const title = document.createElement('div');
                 title.className = 'result-title';
-                const link = document.createElement('a');
-                link.href = getWikipediaUrl(result.title);
-                link.target = '_blank';
-                link.rel = 'noopener noreferrer';
-                link.textContent = `> ${result.title}`;
-                title.appendChild(link);
+                title.textContent = `> ${result.title}`;
 
                 const snippet = document.createElement('div');
                 snippet.className = 'result-snippet';
                 snippet.textContent = stripHtmlTags(result.snippet);
 
-                const url = document.createElement('div');
-                url.className = 'result-url';
-                url.textContent = getWikipediaUrl(result.title);
-
                 resultItem.appendChild(title);
                 resultItem.appendChild(snippet);
-                resultItem.appendChild(url);
+
+                resultItem.addEventListener('click', () => {
+                    loadArticle(result.title);
+                });
 
                 results.appendChild(resultItem);
             });
+        }
+
+        async function loadArticle(title) {
+            loading.style.display = 'block';
+            results.innerHTML = '';
+
+            try {
+                const url = `https://en.wikipedia.org/w/api.php?` +
+                    `action=parse&` +
+                    `page=${encodeURIComponent(title)}&` +
+                    `prop=text&` +
+                    `format=json&` +
+                    `origin=*`;
+
+                const response = await fetch(url);
+                const data = await response.json();
+
+                loading.style.display = 'none';
+
+                if (data.parse && data.parse.text) {
+                    displayArticle(title, data.parse.text['*']);
+                } else {
+                    results.innerHTML = '<div class="no-results">&gt;&gt; ARTICLE NOT FOUND IN THE WIRED &lt;&lt;</div>';
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                results.innerHTML = '<div class="no-results">&gt;&gt; CONNECTION TO THE WIRED FAILED &lt;&lt;</div>';
+                console.error('Error:', error);
+            }
+        }
+
+        function displayArticle(title, html) {
+            results.innerHTML = '';
+
+            const viewer = document.createElement('div');
+            viewer.className = 'article-viewer';
+
+            const backBtn = document.createElement('button');
+            backBtn.className = 'article-back';
+            backBtn.textContent = '< BACK TO RESULTS';
+            backBtn.addEventListener('click', performSearch);
+
+            const heading = document.createElement('div');
+            heading.className = 'article-heading';
+            heading.textContent = `>> ${title}`;
+
+            const content = document.createElement('div');
+            content.className = 'article-content';
+
+            // Parse the HTML and sanitize it
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+
+            // Remove edit links, reference sections, and other UI elements
+            tempDiv.querySelectorAll('.mw-editsection, .reference, .reflist, .navbox, .sistersitebox, .mw-empty-elt, .noprint, .mbox-small, .ambox, .metadata, style, .infobox, .sidebar, .toc, .hatnote').forEach(el => el.remove());
+
+            // Convert Wikipedia internal links to clickable article links
+            tempDiv.querySelectorAll('a[href^="/wiki/"]').forEach(link => {
+                const articleTitle = decodeURIComponent(link.getAttribute('href').replace('/wiki/', '')).replace(/_/g, ' ');
+                link.removeAttribute('href');
+                link.style.cursor = 'pointer';
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loadArticle(articleTitle);
+                    window.scrollTo(0, 0);
+                });
+            });
+
+            // Remove external links that won't work well inline
+            tempDiv.querySelectorAll('a[href^="http"], a[href^="//"]').forEach(link => {
+                if (link.textContent.trim()) {
+                    const text = document.createTextNode(link.textContent);
+                    link.parentNode.replaceChild(text, link);
+                } else {
+                    link.remove();
+                }
+            });
+
+            content.appendChild(tempDiv);
+
+            viewer.appendChild(backBtn);
+            viewer.appendChild(heading);
+            viewer.appendChild(content);
+
+            results.appendChild(viewer);
+            window.scrollTo(0, 0);
         }
 
         // Add focus to search input on page load
