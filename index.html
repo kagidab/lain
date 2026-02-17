@@ -546,6 +546,16 @@
             }
         }
 
+        function getFullSizeImageUrl(thumbUrl) {
+            // Wikipedia thumbnail URLs follow the pattern:
+            // .../thumb/a/ab/File.jpg/220px-File.jpg
+            // Full size URL removes '/thumb' and the trailing '/NNNpx-...' segment
+            if (/\/thumb\//.test(thumbUrl)) {
+                return thumbUrl.replace(/\/thumb\//, '/').replace(/\/\d+px-[^/]*$/, '');
+            }
+            return thumbUrl;
+        }
+
         function displayArticle(title, html) {
             results.innerHTML = '';
 
@@ -609,7 +619,8 @@
                     e.stopPropagation();
                     const overlay = document.getElementById('imageOverlay');
                     const overlayImg = document.getElementById('overlayImage');
-                    overlayImg.src = img.src;
+                    // Use full-resolution image URL for the overlay
+                    overlayImg.src = getFullSizeImageUrl(img.src);
                     overlay.classList.add('active');
                 });
             });
