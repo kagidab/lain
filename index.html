@@ -335,6 +335,17 @@
             }
         }
 
+        function getWikipediaUrl(title) {
+            return `https://en.wikipedia.org/wiki/${encodeURIComponent(title.replace(/ /g, '_'))}`;
+        }
+
+        function stripHtmlTags(html) {
+            // Create a temporary element to parse HTML and extract text safely
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            return tempDiv.textContent || tempDiv.innerText || '';
+        }
+
         function displayResults(searchResults) {
             results.innerHTML = '';
 
@@ -345,7 +356,7 @@
                 const title = document.createElement('div');
                 title.className = 'result-title';
                 const link = document.createElement('a');
-                link.href = `https://en.wikipedia.org/wiki/${encodeURIComponent(result.title.replace(/ /g, '_'))}`;
+                link.href = getWikipediaUrl(result.title);
                 link.target = '_blank';
                 link.rel = 'noopener noreferrer';
                 link.textContent = `> ${result.title}`;
@@ -353,14 +364,11 @@
 
                 const snippet = document.createElement('div');
                 snippet.className = 'result-snippet';
-                // Remove HTML tags and decode entities
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = result.snippet;
-                snippet.textContent = tempDiv.textContent || tempDiv.innerText || '';
+                snippet.textContent = stripHtmlTags(result.snippet);
 
                 const url = document.createElement('div');
                 url.className = 'result-url';
-                url.textContent = `https://en.wikipedia.org/wiki/${result.title.replace(/ /g, '_')}`;
+                url.textContent = getWikipediaUrl(result.title);
 
                 resultItem.appendChild(title);
                 resultItem.appendChild(snippet);
