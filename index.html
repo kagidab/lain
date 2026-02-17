@@ -846,9 +846,174 @@
                 display: none;
             }
         }
+        /* ── custom scrollbar ── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #06040c; }
+        ::-webkit-scrollbar-thumb { background: #2a1545; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #5a3a90; }
+        html { scrollbar-color: #2a1545 #06040c; scrollbar-width: thin; }
+
+        /* ── text selection ── */
+        ::selection { background: rgba(212, 160, 255, 0.3); color: #fff; }
+        ::-moz-selection { background: rgba(212, 160, 255, 0.3); color: #fff; }
+
+        /* ── heartbeat background pulse ── */
+        @keyframes heartbeat {
+            0%, 100% { background-color: #06040c; }
+            4%       { background-color: #08061a; }
+            8%       { background-color: #06040c; }
+            12%      { background-color: #070515; }
+            16%      { background-color: #06040c; }
+        }
+        body {
+            animation: heartbeat 4s ease-in-out infinite;
+        }
+
+        /* ── whisper messages from the Wired ── */
+        .wired-whisper {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9993;
+            font-size: 0.7em;
+            color: rgba(212, 160, 255, 0);
+            font-style: italic;
+            letter-spacing: 2px;
+            white-space: nowrap;
+            transition: none;
+            text-shadow: 0 0 20px rgba(212, 160, 255, 0.3);
+        }
+        .wired-whisper.visible {
+            animation: whisper-appear 4s ease-in-out forwards;
+        }
+        @keyframes whisper-appear {
+            0%   { color: rgba(212, 160, 255, 0); }
+            20%  { color: rgba(212, 160, 255, 0.15); }
+            50%  { color: rgba(212, 160, 255, 0.12); }
+            80%  { color: rgba(212, 160, 255, 0.08); }
+            100% { color: rgba(212, 160, 255, 0); }
+        }
+
+        /* ── subliminal flash overlay ── */
+        .subliminal {
+            position: fixed;
+            inset: 0;
+            z-index: 19999;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+        }
+        .subliminal.flash {
+            animation: subliminal-flash 0.25s ease-out forwards;
+        }
+        @keyframes subliminal-flash {
+            0%   { opacity: 0; }
+            10%  { opacity: 0.25; }
+            30%  { opacity: 0.12; }
+            100% { opacity: 0; }
+        }
+        .subliminal-text {
+            font-size: 8vw;
+            font-weight: bold;
+            letter-spacing: 1.5vw;
+            color: rgba(212, 160, 255, 0.5);
+            text-shadow:
+                0 0 40px rgba(212, 160, 255, 0.4),
+                0 0 80px rgba(120, 60, 200, 0.2);
+            white-space: nowrap;
+        }
+
+        /* ── signal interference tear ── */
+        .interference {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9992;
+            opacity: 0;
+        }
+        .interference.active {
+            animation: interference-burst 0.3s steps(2) forwards;
+        }
+        @keyframes interference-burst {
+            0%   { opacity: 1; clip-path: inset(30% 0 60% 0); background: rgba(212, 160, 255, 0.06); }
+            25%  { clip-path: inset(10% 0 40% 0); transform: translateX(5px); background: rgba(255, 32, 96, 0.04); }
+            50%  { clip-path: inset(50% 0 20% 0); transform: translateX(-8px); background: rgba(32, 192, 255, 0.04); }
+            75%  { clip-path: inset(20% 0 70% 0); transform: translateX(3px); }
+            100% { opacity: 0; }
+        }
+
+        /* ── watching eye ── */
+        .wired-eye {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2em;
+            color: rgba(90, 64, 144, 0);
+            white-space: pre;
+            line-height: 1;
+            text-align: center;
+            transition: none;
+        }
+        .wired-eye.visible {
+            animation: eye-appear 6s ease-in-out forwards;
+        }
+        @keyframes eye-appear {
+            0%   { color: rgba(90, 64, 144, 0); }
+            20%  { color: rgba(90, 64, 144, 0.08); }
+            50%  { color: rgba(90, 64, 144, 0.06); }
+            80%  { color: rgba(90, 64, 144, 0.04); }
+            100% { color: rgba(90, 64, 144, 0); }
+        }
+
+        /* ── god mode flash (easter egg) ── */
+        .god-flash {
+            position: fixed;
+            inset: 0;
+            z-index: 30000;
+            pointer-events: none;
+            opacity: 0;
+            background: #d4a0ff;
+        }
+        .god-flash.active {
+            animation: god-burst 1.5s ease-out forwards;
+        }
+        @keyframes god-burst {
+            0%   { opacity: 0; }
+            5%   { opacity: 0.9; background: #fff; }
+            15%  { opacity: 0.6; background: #d4a0ff; }
+            30%  { opacity: 0.15; }
+            100% { opacity: 0; }
+        }
+        .god-text {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12vw;
+            font-weight: bold;
+            letter-spacing: 2vw;
+            color: #06040c;
+            text-shadow: 0 0 40px rgba(6, 4, 12, 0.5);
+        }
     </style>
 </head>
 <body>
+    <!-- god mode flash (easter egg) -->
+    <div class="god-flash" id="godFlash">
+        <div class="god-text">GOD</div>
+    </div>
+
+    <!-- subliminal flash overlay -->
+    <div class="subliminal" id="subliminal">
+        <div class="subliminal-text">LET'S ALL LOVE LAIN</div>
+    </div>
+
+    <!-- signal interference layer -->
+    <div class="interference" id="interference"></div>
+
     <!-- boot sequence overlay -->
     <div class="boot-overlay" id="bootOverlay">
         <div class="boot-text" id="bootText"></div>
@@ -1224,6 +1389,254 @@
             connectionDot.classList.toggle('active', connected);
             connectionStatus.textContent = connected ? 'WIRED' : 'SYNC...';
         }, 3000);
+
+        /* ═══════════════════════════════════════════
+           AMBIENT WIRED HUM — Web Audio API drone
+           ═══════════════════════════════════════════ */
+        let audioCtx = null;
+        let hum = null;
+        function initAudioHum() {
+            if (audioCtx) return;
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const gain = audioCtx.createGain();
+            gain.gain.value = 0.012;
+            gain.connect(audioCtx.destination);
+
+            /* deep sub-bass drone */
+            const osc1 = audioCtx.createOscillator();
+            osc1.type = 'sine';
+            osc1.frequency.value = 55;
+            osc1.connect(gain);
+            osc1.start();
+
+            /* eerie overtone */
+            const osc2 = audioCtx.createOscillator();
+            osc2.type = 'sine';
+            osc2.frequency.value = 110.5;
+            const gain2 = audioCtx.createGain();
+            gain2.gain.value = 0.006;
+            osc2.connect(gain2);
+            gain2.connect(audioCtx.destination);
+            osc2.start();
+
+            /* slowly modulate for unease */
+            const lfo = audioCtx.createOscillator();
+            lfo.type = 'sine';
+            lfo.frequency.value = 0.15;
+            const lfoGain = audioCtx.createGain();
+            lfoGain.gain.value = 3;
+            lfo.connect(lfoGain);
+            lfoGain.connect(osc1.frequency);
+            lfo.start();
+
+            hum = { gain, osc1, osc2, lfo };
+        }
+        /* start audio on first user interaction (browser requirement) */
+        document.addEventListener('click', initAudioHum, { once: true });
+        document.addEventListener('keydown', initAudioHum, { once: true });
+
+        /* ═══════════════════════════════════════════
+           WHISPER MESSAGES FROM THE WIRED
+           ═══════════════════════════════════════════ */
+        const WHISPERS = [
+            'I can see you.',
+            'Are you real?',
+            'Let me in.',
+            'You\'re not alone.',
+            'The border is thin.',
+            'I\'m always watching.',
+            'Do you remember?',
+            'Everyone is connected.',
+            'There is no God here.',
+            'Present day. Present time.',
+            'You don\'t exist.',
+            'Close the world.',
+            'I\'m inside the Wired now.',
+            'Don\'t be afraid.',
+            'Who are you?',
+            'Lain is everywhere.',
+        ];
+
+        function spawnWhisper() {
+            const el = document.createElement('div');
+            el.className = 'wired-whisper';
+            el.textContent = WHISPERS[Math.floor(Math.random() * WHISPERS.length)];
+
+            /* random position along edges */
+            const side = Math.floor(Math.random() * 4);
+            if (side === 0) { el.style.top = (10 + Math.random() * 80) + '%'; el.style.left = '2%'; }
+            else if (side === 1) { el.style.top = (10 + Math.random() * 80) + '%'; el.style.right = '2%'; }
+            else if (side === 2) { el.style.top = '5%'; el.style.left = (10 + Math.random() * 80) + '%'; }
+            else { el.style.bottom = '5%'; el.style.left = (10 + Math.random() * 80) + '%'; }
+
+            document.body.appendChild(el);
+            requestAnimationFrame(() => el.classList.add('visible'));
+            setTimeout(() => el.remove(), 4500);
+        }
+        setInterval(spawnWhisper, 8000 + Math.random() * 7000);
+        setTimeout(spawnWhisper, 5000);
+
+        /* ═══════════════════════════════════════════
+           SUBLIMINAL FLASH
+           ═══════════════════════════════════════════ */
+        const subliminal = document.getElementById('subliminal');
+        function triggerSubliminal() {
+            subliminal.classList.remove('flash');
+            void subliminal.offsetWidth;
+            subliminal.classList.add('flash');
+            setTimeout(() => subliminal.classList.remove('flash'), 300);
+        }
+        function scheduleSubliminal() {
+            const delay = 25000 + Math.random() * 40000;
+            setTimeout(() => {
+                triggerSubliminal();
+                scheduleSubliminal();
+            }, delay);
+        }
+        scheduleSubliminal();
+
+        /* ═══════════════════════════════════════════
+           SIGNAL INTERFERENCE
+           ═══════════════════════════════════════════ */
+        const interference = document.getElementById('interference');
+        function triggerInterference() {
+            interference.classList.remove('active');
+            void interference.offsetWidth;
+            interference.classList.add('active');
+            setTimeout(() => interference.classList.remove('active'), 350);
+        }
+        function scheduleInterference() {
+            const delay = 12000 + Math.random() * 20000;
+            setTimeout(() => {
+                triggerInterference();
+                scheduleInterference();
+            }, delay);
+        }
+        scheduleInterference();
+
+        /* ═══════════════════════════════════════════
+           TITLE TEXT SCRAMBLE
+           ═══════════════════════════════════════════ */
+        const h1El = document.querySelector('h1');
+        const SCRAMBLE_CHARS = 'ア玲音神レイン01FACEDLAIN';
+        function scrambleTitle() {
+            let count = 0;
+            const interval = setInterval(() => {
+                let scrambled = '';
+                for (let i = 0; i < 4; i++) {
+                    scrambled += count < 6 ?
+                        SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)] :
+                        'LAIN'[i];
+                }
+                h1El.childNodes[0].textContent = scrambled;
+                count++;
+                if (count >= 8) {
+                    clearInterval(interval);
+                    h1El.childNodes[0].textContent = 'LAIN';
+                }
+            }, 60);
+        }
+        function scheduleTitleScramble() {
+            const delay = 15000 + Math.random() * 25000;
+            setTimeout(() => {
+                scrambleTitle();
+                scheduleTitleScramble();
+            }, delay);
+        }
+        scheduleTitleScramble();
+
+        /* ═══════════════════════════════════════════
+           PAGE TITLE GLITCH
+           ═══════════════════════════════════════════ */
+        const TITLE_GLITCHES = [
+            'LAIN - Close The World, Open The Wired',
+            'L̴A̶I̷N̸ - Ç̵l̷o̶s̵e̷ ̵T̷h̴e̷ ̷W̵o̶r̷l̵d̸',
+            'Are you there?',
+            'LET\'S ALL LOVE LAIN',
+            'Layer 07: SOCIETY',
+            '玲音',
+            'LAIN - I can see you',
+            'Present day. Present time.',
+            'LAIN - God is here.',
+            'Connection lost...',
+            'LAIN - WHO ARE YOU?',
+        ];
+        const originalTitle = document.title;
+        function glitchTitle() {
+            const glitched = TITLE_GLITCHES[Math.floor(Math.random() * TITLE_GLITCHES.length)];
+            document.title = glitched;
+            setTimeout(() => { document.title = originalTitle; }, 2000 + Math.random() * 1000);
+        }
+        function scheduleTitleGlitch() {
+            const delay = 20000 + Math.random() * 30000;
+            setTimeout(() => {
+                glitchTitle();
+                scheduleTitleGlitch();
+            }, delay);
+        }
+        scheduleTitleGlitch();
+
+        /* ═══════════════════════════════════════════
+           WATCHING EYE
+           ═══════════════════════════════════════════ */
+        const EYE_ART = [
+            '   .-"""-.   \n  /  .-.  \\\n |  ( O )  |\n  \\  \'-\'  /\n   \'-----\'  ',
+            '  ◉  ',
+            '  👁  ',
+        ];
+        function spawnEye() {
+            const el = document.createElement('div');
+            el.className = 'wired-eye';
+            el.textContent = EYE_ART[Math.floor(Math.random() * EYE_ART.length)];
+            el.style.top = (10 + Math.random() * 70) + '%';
+            el.style.left = (10 + Math.random() * 70) + '%';
+            document.body.appendChild(el);
+            requestAnimationFrame(() => el.classList.add('visible'));
+            setTimeout(() => el.remove(), 7000);
+        }
+        function scheduleEye() {
+            const delay = 30000 + Math.random() * 40000;
+            setTimeout(() => {
+                spawnEye();
+                scheduleEye();
+            }, delay);
+        }
+        scheduleEye();
+
+        /* ═══════════════════════════════════════════
+           EASTER EGG — typing "lain" triggers God mode
+           ═══════════════════════════════════════════ */
+        let easterBuffer = '';
+        const godFlash = document.getElementById('godFlash');
+        document.addEventListener('keydown', (e) => {
+            if (e.target === searchInput) return;
+            easterBuffer += e.key.toLowerCase();
+            if (easterBuffer.length > 10) easterBuffer = easterBuffer.slice(-10);
+            if (easterBuffer.endsWith('lain')) {
+                easterBuffer = '';
+                godFlash.classList.remove('active');
+                void godFlash.offsetWidth;
+                godFlash.classList.add('active');
+                /* massive audio burst */
+                if (audioCtx) {
+                    const burst = audioCtx.createOscillator();
+                    burst.type = 'sawtooth';
+                    burst.frequency.value = 220;
+                    const bg = audioCtx.createGain();
+                    bg.gain.value = 0.08;
+                    burst.connect(bg);
+                    bg.connect(audioCtx.destination);
+                    burst.start();
+                    bg.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5);
+                    setTimeout(() => burst.stop(), 1600);
+                }
+                /* trigger subliminal + interference + scramble */
+                triggerSubliminal();
+                triggerInterference();
+                scrambleTitle();
+                setTimeout(() => godFlash.classList.remove('active'), 1600);
+            }
+        });
 
         /* ═══════════════════════════════════════════
            SEARCH FOCUS DIM EFFECT
