@@ -1473,8 +1473,14 @@
             requestAnimationFrame(() => el.classList.add('visible'));
             setTimeout(() => el.remove(), 4500);
         }
-        setInterval(spawnWhisper, 8000 + Math.random() * 7000);
-        setTimeout(spawnWhisper, 5000);
+        function scheduleWhisper() {
+            const delay = 8000 + Math.random() * 7000;
+            setTimeout(() => {
+                spawnWhisper();
+                scheduleWhisper();
+            }, delay);
+        }
+        scheduleWhisper();
 
         /* ═══════════════════════════════════════════
            SUBLIMINAL FLASH
@@ -1520,6 +1526,8 @@
         const h1El = document.querySelector('h1');
         const SCRAMBLE_CHARS = 'ア玲音神レイン01FACEDLAIN';
         function scrambleTitle() {
+            const textNode = h1El.firstChild;
+            if (!textNode || textNode.nodeType !== 3) return;
             let count = 0;
             const interval = setInterval(() => {
                 let scrambled = '';
@@ -1528,11 +1536,11 @@
                         SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)] :
                         'LAIN'[i];
                 }
-                h1El.childNodes[0].textContent = scrambled;
+                textNode.textContent = scrambled;
                 count++;
                 if (count >= 8) {
                     clearInterval(interval);
-                    h1El.childNodes[0].textContent = 'LAIN';
+                    textNode.textContent = 'LAIN';
                 }
             }, 60);
         }
@@ -1611,7 +1619,7 @@
         document.addEventListener('keydown', (e) => {
             if (e.target === searchInput) return;
             easterBuffer += e.key.toLowerCase();
-            if (easterBuffer.length > 10) easterBuffer = easterBuffer.slice(-10);
+            if (easterBuffer.length > 4) easterBuffer = easterBuffer.slice(-4);
             if (easterBuffer.endsWith('lain')) {
                 easterBuffer = '';
                 godFlash.classList.remove('active');
